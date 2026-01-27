@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proyectos | Consultoría</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="navbar compact">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.jpg" alt="Logo" class="brand-logo" />
+      <span class="brand-name">Consultoría</span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html">Inicio</a>
+      <a class="nav-link" href="empresa.html">Empresa</a>
+      <a class="nav-link" href="apps.html">Apps</a>
+      <a class="nav-link active" href="proyectos.html">Proyectos</a>
+      <a class="nav-link nav-cta" href="solicitar.html">Solicitar propuesta</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="container">
+      <header class="page-head reveal">
+        <h1>Portafolio de proyectos</h1>
+        <p>Ejemplos: páginas web, consultorías, instalaciones y apps.</p>
+      </header>
+
+      <section class="section mini">
+        <div class="toolbar reveal">
+          <input id="filterText" class="input" placeholder="Buscar..." />
+          <select id="filterType" class="select">
+            <option value="all">Todos</option>
+            <option value="pagina_web">Páginas web</option>
+            <option value="instalacion_programas">Instalación</option>
+            <option value="consultoria">Consultoría</option>
+            <option value="app">App</option>
+          </select>
+        </div>
+
+        <div class="cards" id="projectsGrid"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-row">
+      <div class="footer-brand">Consultoría</div>
+      <div class="footer-links">
+        <a href="admin.html">Panel Admin</a>
+        <a href="solicitar.html">Solicitar</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
