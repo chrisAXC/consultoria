@@ -7,156 +7,74 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <nav class="navbar compact">
-    <a class="brand" href="index.html">
-      <img src="assets/logo.jpg" alt="Logo" class="brand-logo" />
-      <span class="brand-name">Consultoría</span>
-    </a>
-    <div class="nav-links">
-      <a class="nav-link" href="index.html">Inicio</a>
-      <a class="nav-link active" href="admin.html">Panel Admin</a>
-    </div>
-  </nav>
 
-  <main class="page">
-    <div class="container">
-      <header class="page-head reveal">
-        <h1>Panel Admin</h1>
-        <p>Ver usuarios, correos enviados y responder desde aquí.</p>
-      </header>
+<!-- PROTECCIÓN -->
+<script>
+  if (localStorage.getItem("adminAuth") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
 
-      <section class="section mini">
-        <div class="admin-grid">
-          <div class="admin-card reveal">
-            <h3>Login (demo)</h3>
-            <form id="adminLoginForm" class="form mini-form">
-              <div class="field">
-                <label>Email</label>
-                <input name="email" type="email" required placeholder="admin@consultoria.com" />
-              </div>
-              <div class="field">
-                <label>Password</label>
-                <input name="password" type="password" required placeholder="1234" />
-              </div>
-              <button class="btn primary" type="submit">Entrar</button>
-              <div class="muted small">En producción esto valida en backend.</div>
-            </form>
-          </div>
+<nav class="navbar compact">
+  <a class="brand" href="index.html">
+    <img src="assets/logo.png" class="brand-logo">
+    <span class="brand-name">Consultoría</span>
+  </a>
 
-          <div class="admin-card reveal" style="--delay: 120ms;">
-            <h3>Resumen</h3>
-            <div class="kpis">
-              <div class="kpi">
-                <div class="kpi-num" id="kpiUsers">0</div>
-                <div class="kpi-label">Usuarios</div>
-              </div>
-              <div class="kpi">
-                <div class="kpi-num" id="kpiMessages">0</div>
-                <div class="kpi-label">Mensajes</div>
-              </div>
-              <div class="kpi">
-                <div class="kpi-num" id="kpiPending">0</div>
-                <div class="kpi-label">Pendientes</div>
-              </div>
-            </div>
-          </div>
+  <!-- BOTÓN CERRAR SESIÓN -->
+  <button id="logoutBtn" class="btn danger small">
+    Cerrar sesión
+  </button>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <header class="page-head">
+      <h1>Panel Admin</h1>
+      <p>Gestión de mensajes</p>
+    </header>
+
+    <section class="admin-card">
+      <h3>Mensajes recibidos</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Asunto</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="messagesTable"></tbody>
+      </table>
+    </section>
+
+    <section class="admin-card" style="margin-top:16px;">
+      <h3>Responder</h3>
+
+      <form id="replyForm" class="form">
+        <input type="hidden" name="id_message">
+
+        <div class="grid-2">
+          <input name="asunto" required>
+          <select name="status">
+            <option value="en_proceso">En proceso</option>
+            <option value="respondido">Respondido</option>
+            <option value="cerrado">Cerrado</option>
+          </select>
         </div>
 
-        <div class="admin-card reveal" style="margin-top:16px;">
-          <div class="admin-head">
-            <h3>Mensajes</h3>
-            <div class="toolbar">
-              <select id="statusFilter" class="select">
-                <option value="all">Todos</option>
-                <option value="nuevo">Nuevo</option>
-                <option value="en_proceso">En proceso</option>
-                <option value="respondido">Respondido</option>
-                <option value="cerrado">Cerrado</option>
-              </select>
-              <input id="adminSearch" class="input" placeholder="Buscar por correo/asunto..." />
-            </div>
-          </div>
+        <textarea name="respuesta" rows="6" required></textarea>
+        <button class="btn primary">Enviar respuesta</button>
+      </form>
+    </section>
 
-          <div class="table-wrap">
-            <table class="table" id="messagesTable">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Usuario</th>
-                  <th>Correo</th>
-                  <th>Asunto</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
+  </div>
+</main>
 
-        <div class="admin-card reveal" style="margin-top:16px;">
-          <h3>Responder</h3>
-          <form id="replyForm" class="form">
-            <input type="hidden" name="messageId" />
-            <div class="grid-2">
-              <div class="field">
-                <label>Asunto</label>
-                <input name="asunto" required placeholder="Respuesta a tu solicitud" />
-              </div>
-              <div class="field">
-                <label>Status</label>
-                <select name="status" class="select">
-                  <option value="en_proceso">En proceso</option>
-                  <option value="respondido">Respondido</option>
-                  <option value="cerrado">Cerrado</option>
-                </select>
-              </div>
-            </div>
-            <div class="field">
-              <label>Respuesta</label>
-              <textarea name="respuesta" rows="6" required placeholder="Escribe tu respuesta..."></textarea>
-            </div>
-            <div class="form-actions">
-              <button class="btn primary" type="submit">Guardar respuesta</button>
-              <button class="btn ghost" type="button" id="clearReply">Limpiar</button>
-            </div>
-            <div class="muted small">
-              En producción: aquí también puedes enviar correo real (SMTP) y marcar enviado_a_correo=1.
-            </div>
-          </form>
-        </div>
-
-        <div class="admin-card reveal" style="margin-top:16px;">
-          <h3>Usuarios</h3>
-          <div class="table-wrap">
-            <table class="table" id="usersTable">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Nombre</th>
-                  <th>Correo</th>
-                  <th>Teléfono</th>
-                  <th>Origen</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-      </section>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <div class="container footer-row">
-      <div class="footer-brand">Consultoría</div>
-      <div class="footer-links">
-        <a href="index.html">Inicio</a>
-      </div>
-    </div>
-  </footer>
-
-  <script src="admin.js"></script>
+<script src="admin.js"></script>
 </body>
 </html>
