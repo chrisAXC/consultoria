@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solicitar propuesta | Consultoría</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="navbar compact">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.jpg" alt="Logo" class="brand-logo" />
+      <span class="brand-name">Consultoría</span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html">Inicio</a>
+      <a class="nav-link" href="empresa.html">Empresa</a>
+      <a class="nav-link" href="apps.html">Apps</a>
+      <a class="nav-link" href="proyectos.html">Proyectos</a>
+      <a class="nav-link nav-cta active" href="solicitar.html">Solicitar propuesta</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="container">
+      <header class="page-head reveal">
+        <h1>Solicitar propuesta</h1>
+        <p>Deja tus datos y el mensaje. Se registrará y te contactamos.</p>
+      </header>
+
+      <section class="section mini">
+        <div class="form-wrap reveal">
+          <form id="contactForm" class="form">
+            <div class="grid-2">
+              <div class="field">
+                <label>Nombre</label>
+                <input name="nombre" required placeholder="Tu nombre" />
+              </div>
+              <div class="field">
+                <label>Apellido</label>
+                <input name="apellido" required placeholder="Tu apellido" />
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>Correo</label>
+                <input name="email" type="email" required placeholder="tucorreo@dominio.com" />
+              </div>
+              <div class="field">
+                <label>Teléfono</label>
+                <input name="telefono" placeholder="+52..." />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Asunto</label>
+              <input name="asunto" required placeholder="Ej: Página web para negocio" />
+            </div>
+
+            <div class="field">
+              <label>Mensaje</label>
+              <textarea name="mensaje" required rows="6" placeholder="Cuéntanos lo que necesitas..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn primary" type="submit">Enviar</button>
+              <a class="btn ghost" href="index.html">Volver</a>
+            </div>
+          </form>
+
+          <div id="formResult" class="form-result" hidden>
+            <h3>Listo</h3>
+            <p>En momentos nos ponemos en contacto contigo.</p>
+            <a class="btn primary" href="index.html">Ir al inicio</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-row">
+      <div class="footer-brand">Consultoría</div>
+      <div class="footer-links">
+        <a href="admin.html">Panel Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
