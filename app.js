@@ -1,21 +1,13 @@
-// ================================
-// app.js - Frontend (con backend PHP + MySQL)
-// - Animaciones reveal
-// - Contadores
-// - Chatbot (respuestas rápidas)
-// - Formulario (envía a php/submit_contact.php y muestra folio)
-// - Proyectos (demo + filtro)
-// ================================
 
 (function () {
-  // Mobile nav
+  
   const navToggle = document.getElementById("navToggle");
   const navLinks = document.getElementById("navLinks");
   if (navToggle && navLinks) {
     navToggle.addEventListener("click", () => navLinks.classList.toggle("open"));
   }
 
-  // Reveal on scroll
+  
   const revealEls = Array.from(document.querySelectorAll(".reveal"));
   const io = new IntersectionObserver(
     (entries) => {
@@ -30,7 +22,7 @@
   );
   revealEls.forEach((el) => io.observe(el));
 
-  // Counters in hero
+  
   const counters = Array.from(document.querySelectorAll("[data-counter]"));
   const animateCounter = (el) => {
     const target = parseInt(el.getAttribute("data-counter"), 10) || 0;
@@ -62,7 +54,7 @@
   );
   counters.forEach((c) => counterObserver.observe(c));
 
-  // Projects page demo data
+  
   const demoProjects = [
     {
       id: 1,
@@ -157,22 +149,20 @@
     filterType?.addEventListener("change", renderProjects);
   }
 
-  // =========================
-  // Contact form (Backend PHP)
-  // =========================
+  
   const contactForm = document.getElementById("contactForm");
   const formResult = document.getElementById("formResult");
   const folioText = document.getElementById("folioText");
   const btnSeguimiento = document.getElementById("btnSeguimiento");
 
   async function sendContactToBackend(formData) {
-    // Envia directo a tu backend PHP (MySQL)
+    
     const res = await fetch("php/submit_contact.php", {
       method: "POST",
       body: formData,
     });
 
-    // Si backend devuelve HTML por error, esto evita crasheo feo
+    
     const text = await res.text();
     let data = null;
     try {
@@ -185,7 +175,7 @@
       throw new Error(data?.error || "No se pudo enviar");
     }
 
-    return data; // { ok:true, msg:'...', folio:'...' }
+    return data; 
   }
 
   if (contactForm) {
@@ -203,7 +193,7 @@
       try {
         const fd = new FormData(contactForm);
 
-        // validación mínima frontend
+        
         const email = String(fd.get("email") || "").trim();
         const asunto = String(fd.get("asunto") || "").trim();
         const mensaje = String(fd.get("mensaje") || "").trim();
@@ -225,7 +215,7 @@
           )}&email=${encodeURIComponent(email)}`;
         }
 
-        // Oculta form y muestra resultado
+        
         contactForm.hidden = true;
         if (formResult) formResult.hidden = false;
 
@@ -242,7 +232,7 @@
   }
 
   // =========================
-  // Chatbot (demo local)
+  // Chatbot 
   // =========================
   const chatFab = document.getElementById("chatFab");
   const chatBox = document.getElementById("chatBox");
@@ -297,8 +287,7 @@
     return "Puedo ayudarte. Dime si es consultoría, instalación de programas o página web. Si deseas, deja tu correo en Solicitar propuesta y registramos tu solicitud.";
   }
 
-  // (Opcional) si luego quieres guardar logs del chatbot en BD,
-  // hacemos php/chat_log.php y lo conectamos aquí.
+  
   if (chatFab && chatBox) {
     chatFab.addEventListener("click", () => {
       chatBox.classList.add("open");
