@@ -9,7 +9,7 @@
 <body>
   <nav class="navbar compact">
     <a class="brand" href="index.html">
-      <img src="assets/logo.jpg" alt="Logo" class="brand-logo" />
+      <img src="assets/logo.png" alt="Logo" class="brand-logo" />
       <span class="brand-name">Consultoría</span>
     </a>
     <div class="nav-links">
@@ -30,6 +30,8 @@
 
       <section class="section mini">
         <div class="form-wrap reveal">
+
+          <!-- FORMULARIO -->
           <form id="contactForm" class="form">
             <div class="grid-2">
               <div class="field">
@@ -69,11 +71,24 @@
             </div>
           </form>
 
+          <!-- RESULTADO (SE MUESTRA AL ENVIAR) -->
           <div id="formResult" class="form-result" hidden>
-            <h3>Listo</h3>
-            <p>En momentos nos ponemos en contacto contigo.</p>
-            <a class="btn primary" href="index.html">Ir al inicio</a>
+            <h3>Listo ✅</h3>
+            <p>Tu solicitud fue registrada. Guarda tu folio para consultar la respuesta del administrador.</p>
+
+            <div class="folio-box" style="margin:12px 0;padding:12px;border:1px solid #e5e7eb;border-radius:12px;">
+              <p style="margin:0;"><b>Folio:</b> <span id="folioText">---</span></p>
+              <p style="margin:6px 0 0;opacity:.8;font-size:.95rem;">
+                Con este folio podrás ver el estado y respuesta en Seguimiento.
+              </p>
+            </div>
+
+            <div class="form-actions">
+              <a class="btn primary" id="btnSeguimiento" href="seguimiento.html">Ir a Seguimiento</a>
+              <a class="btn ghost" href="index.html">Ir al inicio</a>
+            </div>
           </div>
+
         </div>
       </section>
     </div>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel Admin | Consultoría</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+   
+
+    .ap-wrap{max-width:1100px;margin:0 auto;padding:24px}
+    .ap-top{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin:18px 0}
+    .ap-title{display:flex;flex-direction:column;gap:6px}
+    .ap-title h1{margin:0; font-size:2rem; line-height:1.1}
+    .ap-sub{opacity:.8}
+
+    .ap-kpis{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .ap-pill{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:.9rem;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      backdrop-filter: blur(8px);
+      white-space:nowrap;
+    }
+    .ap-pill strong{font-weight:800}
+
+    .ap-card{
+      background: rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.20);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .ap-toolbar{
+      display:flex;gap:10px;flex-wrap:wrap;
+      align-items:center;justify-content:space-between;
+      padding:14px;
+    }
+    .ap-left,.ap-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+    .ap-input,.ap-select{
+      border:1px solid rgba(2,6,23,.18);
+      border-radius:12px;
+      padding:10px 12px;
+      background:#fff;
+      color:#0b1220;
+      outline:none;
+      min-width:220px;
+    }
+    .ap-select{min-width:180px}
+
+    .ap-btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      gap:8px;
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid rgba(2,6,23,.14);
+      background:#fff;
+      cursor:pointer;
+      font-weight:700;
+      color:#0b1220;
+    }
+    .ap-btn.primary{
+      background:#0ea5e9;
+      border-color:#0ea5e9;
+      color:#fff;
+    }
+    .ap-btn:disabled{opacity:.6;cursor:not-allowed}
+
+    .ap-table-wrap{overflow:auto;border-top:1px solid rgba(2,6,23,.08)}
+    .ap-table{width:100%;border-collapse:collapse;min-width:920px}
+    .ap-table th,.ap-table td{
+      padding:12px 12px;text-align:left;
+      border-bottom:1px solid rgba(2,6,23,.08);
+      vertical-align:top;
+      color:#0b1220;
+    }
+    .ap-table th{
+      font-size:.92rem;
+      background: rgba(2,6,23,.03);
+      position:sticky;top:0;z-index:1;
+    }
+    .ap-muted{opacity:.75}
+
+    .ap-status{display:inline-flex;align-items:center;gap:8px}
+    .ap-dot{width:10px;height:10px;border-radius:999px;background:#94a3b8}
+    .ap-dot.nuevo{background:#f97316}
+    .ap-dot.en_proceso{background:#6366f1}
+    .ap-dot.respondido{background:#22c55e}
+    .ap-dot.cerrado{background:#64748b}
+
+    .ap-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+    .ap-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    .ap-empty{padding:18px}
+
+    /* Modal */
+    .ap-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.60);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+    .ap-backdrop.open{display:flex}
+    .ap-modal{width:min(780px, 100%);border-radius:18px;overflow:hidden}
+    .ap-modal-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(2,6,23,.08)}
+    .ap-modal-body{padding:16px}
+    .ap-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:720px){ .ap-grid2{grid-template-columns:1fr} .ap-table{min-width:820px} }
+
+    .ap-box{
+      display:block;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(2,6,23,.10);
+      background: rgba(2,6,23,.02);
+      color:#0b1220;
+      white-space:pre-wrap;
+      line-height:1.35;
+    }
+    .ap-textarea{
+      width:100%;
+      min-height:160px;
+      border:1px solid rgba(2,6,23,.18);
+      border-radius:14px;
+      padding:12px;
+      outline:none;
+      resize:vertical;
+      background:#fff;
+      color:#0b1220;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar compact">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="Logo" class="brand-logo" />
+      <span class="brand-name">Consultoría</span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html">Inicio</a>
+      <a class="nav-link nav-cta active" href="admin-panel.html">Panel Admin</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="ap-wrap">
+      <div class="ap-top">
+        <div class="ap-title">
+          <h1>Panel de Solicitudes</h1>
+          <div class="ap-sub" id="apWho">Cargando sesión...</div>
+        </div>
+
+        <div class="ap-kpis">
+          <span class="ap-pill"><strong>Nuevas:</strong> <span id="apKpiNuevo">0</span></span>
+          <span class="ap-pill"><strong>En proceso:</strong> <span id="apKpiProceso">0</span></span>
+          <span class="ap-pill"><strong>Respondidas:</strong> <span id="apKpiResp">0</span></span>
+          <span class="ap-pill"><strong>Total:</strong> <span id="apKpiTotal">0</span></span>
+        </div>
+      </div>
+
+      <section class="ap-card">
+        <div class="ap-toolbar">
+          <div class="ap-left">
+            <select class="ap-select" id="apFilterStatus">
+              <option value="">Todas</option>
+              <option value="nuevo">Nuevas</option>
+              <option value="en_proceso">En proceso</option>
+              <option value="respondido">Respondidas</option>
+              <option value="cerrado">Cerradas</option>
+            </select>
+
+            <input class="ap-input" id="apSearch" placeholder="Buscar por folio, correo, asunto, nombre..." />
+
+            <button class="ap-btn" id="apRefresh" type="button">Actualizar</button>
+          </div>
+
+          <div class="ap-right">
+            <button class="ap-btn" id="apGoLogin" type="button" hidden>Ir a Login</button>
+            <button class="ap-btn" id="apLogout" type="button">Cerrar sesión</button>
+          </div>
+        </div>
+
+        <div class="ap-table-wrap">
+          <table class="ap-table">
+            <thead>
+              <tr>
+                <th style="width:120px;">Folio</th>
+                <th style="width:240px;">Cliente</th>
+                <th>Asunto</th>
+                <th style="width:140px;">Estado</th>
+                <th style="width:190px;">Fecha</th>
+                <th style="width:170px;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="apTbody">
+              <tr><td colspan="6" class="ap-empty">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="ap-backdrop" id="apBackdrop" aria-hidden="true">
+    <div class="ap-modal ap-card">
+      <div class="ap-modal-head">
+        <div>
+          <div style="font-weight:800;">Responder solicitud</div>
+          <div class="ap-muted" id="apMeta" style="font-size:.92rem;">—</div>
+        </div>
+        <button class="ap-btn" id="apClose" type="button">Cerrar</button>
+      </div>
+
+      <div class="ap-modal-body">
+        <div class="ap-grid2">
+          <div>
+            <div class="ap-muted" style="font-size:.85rem;margin-bottom:6px;">Folio</div>
+            <div class="ap-box ap-mono" id="apFolio">—</div>
+          </div>
+          <div>
+            <div class="ap-muted" style="font-size:.85rem;margin-bottom:6px;">Correo</div>
+            <div class="ap-box" id="apEmail">—</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="ap-muted" style="font-size:.85rem;margin-bottom:6px;">Mensaje del cliente</div>
+          <div class="ap-box" id="apMensaje">—</div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="ap-muted" style="font-size:.85rem;margin-bottom:6px;">Asunto de respuesta</div>
+          <input class="ap-input" style="width:100%;min-width:auto;" id="apReplyAsunto" placeholder="Re: ..." />
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="ap-muted" style="font-size:.85rem;margin-bottom:6px;">Respuesta</div>
+          <textarea class="ap-textarea" id="apReplyText" placeholder="Escribe la respuesta aquí..."></textarea>
+        </div>
+
+        <div class="ap-actions" style="margin-top:12px;justify-content:flex-end;">
+          <button class="ap-btn primary" id="apSendReply" type="button">Guardar respuesta</button>
+        </div>
+
+        <p class="ap-muted" id="apMsg" style="margin:10px 0 0;"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin-panel.js"></script>
+</body>
+</html>

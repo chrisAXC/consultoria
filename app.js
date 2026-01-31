@@ -1,9 +1,9 @@
 // ================================
-// app.js - Frontend (sin backend)
+// app.js - Frontend (con backend PHP + MySQL)
 // - Animaciones reveal
 // - Contadores
 // - Chatbot (respuestas rápidas)
-// - Formulario (modo demo localStorage + endpoints opcionales)
+// - Formulario (envía a php/submit_contact.php y muestra folio)
 // - Proyectos (demo + filtro)
 // ================================
 
@@ -157,90 +157,93 @@
     filterType?.addEventListener("change", renderProjects);
   }
 
-  // Contact form
+  // =========================
+  // Contact form (Backend PHP)
+  // =========================
   const contactForm = document.getElementById("contactForm");
   const formResult = document.getElementById("formResult");
+  const folioText = document.getElementById("folioText");
+  const btnSeguimiento = document.getElementById("btnSeguimiento");
 
-  async function postToApiOrDemo(payload) {
-    // Si tienes backend, cambia USE_DEMO = false y define tus endpoints.
-    const USE_DEMO = true;
+  async function sendContactToBackend(formData) {
+    // Envia directo a tu backend PHP (MySQL)
+    const res = await fetch("php/submit_contact.php", {
+      method: "POST",
+      body: formData,
+    });
 
-    if (!USE_DEMO) {
-      // Ejemplo backend:
-      // POST /api/contact
-      // body: {nombre, apellido, email, telefono, asunto, mensaje}
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Error al enviar");
-      return await res.json();
+    // Si backend devuelve HTML por error, esto evita crasheo feo
+    const text = await res.text();
+    let data = null;
+    try {
+      data = JSON.parse(text);
+    } catch (_) {
+      throw new Error("Respuesta inválida del servidor");
     }
 
-    // DEMO (localStorage)
-    const db = loadDemoDB();
-    const now = new Date().toISOString();
-
-    // upsert user
-    let user = db.users.find((u) => u.email.toLowerCase() === payload.email.toLowerCase());
-    if (!user) {
-      user = {
-        id_user: db.nextUserId++,
-        nombre: payload.nombre,
-        apellido: payload.apellido,
-        email: payload.email,
-        telefono: payload.telefono || "",
-        origen: "contacto",
-        creado_en: now,
-      };
-      db.users.push(user);
-    } else {
-      user.nombre = payload.nombre;
-      user.apellido = payload.apellido;
-      user.telefono = payload.telefono || user.telefono;
+    if (!res.ok || !data.ok) {
+      throw new Error(data?.error || "No se pudo enviar");
     }
 
-    const msg = {
-      id_message: db.nextMessageId++,
-      id_user: user.id_user,
-      asunto: payload.asunto,
-      mensaje: payload.mensaje,
-      canal: "formulario",
-      status: "nuevo",
-      creado_en: now,
-    };
-    db.messages.push(msg);
-
-    saveDemoDB(db);
-    return { ok: true, id_message: msg.id_message };
+    return data; // { ok:true, msg:'...', folio:'...' }
   }
 
   if (contactForm) {
     contactForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const fd = new FormData(contactForm);
-      const payload = {
-        nombre: String(fd.get("nombre") || "").trim(),
-        apellido: String(fd.get("apellido") || "").trim(),
-        email: String(fd.get("email") || "").trim(),
-        telefono: String(fd.get("telefono") || "").trim(),
-        asunto: String(fd.get("asunto") || "").trim(),
-        mensaje: String(fd.get("mensaje") || "").trim(),
-      };
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const oldText = submitBtn ? submitBtn.textContent : "Enviar";
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Enviando...";
+      }
 
       try {
-        await postToApiOrDemo(payload);
+        const fd = new FormData(contactForm);
+
+        // validación mínima frontend
+        const email = String(fd.get("email") || "").trim();
+        const asunto = String(fd.get("asunto") || "").trim();
+        const mensaje = String(fd.get("mensaje") || "").trim();
+
+        if (!email || !asunto || !mensaje) {
+          alert("Completa correo, asunto y mensaje.");
+          return;
+        }
+
+        const data = await sendContactToBackend(fd);
+
+        // Mostrar folio en UI
+        if (folioText) folioText.textContent = data.folio || "---";
+
+        // Pasar folio+email por URL para auto-llenar seguimiento
+        if (btnSeguimiento) {
+          btnSeguimiento.href = `seguimiento.html?folio=${encodeURIComponent(
+            data.folio || ""
+          )}&email=${encodeURIComponent(email)}`;
+        }
+
+        // Oculta form y muestra resultado
         contactForm.hidden = true;
-        formResult.hidden = false;
+        if (formResult) formResult.hidden = false;
+
+        contactForm.reset();
       } catch (err) {
-        alert("No se pudo enviar. Intenta de nuevo.");
+        alert(err?.message || "No se pudo enviar. Intenta de nuevo.");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = oldText;
+        }
       }
     });
   }
 
-  // Chatbot
+  // =========================
+  // Chatbot (demo local)
+  // =========================
   const chatFab = document.getElementById("chatFab");
   const chatBox = document.getElementById("chatBox");
   const chatClose = document.getElementById("chatClose");
@@ -284,7 +287,7 @@
       {
         keys: ["contacto", "correo", "tel", "telefono"],
         text:
-          "Tel: +52 000 000 0000 | Correo: contacto@consultoria.com. Si dejas tu mensaje, en momentos nos ponemos en contacto contigo.",
+          "Tel: +52 5634132578 | Correo: contacto@consultoria.com. Si dejas tu mensaje, registramos tu solicitud y podrás ver la respuesta en Seguimiento con tu folio.",
       },
     ];
 
@@ -294,29 +297,8 @@
     return "Puedo ayudarte. Dime si es consultoría, instalación de programas o página web. Si deseas, deja tu correo en Solicitar propuesta y registramos tu solicitud.";
   }
 
-  async function logChatToApiOrDemo(pregunta, respuesta) {
-    const USE_DEMO = true;
-
-    if (!USE_DEMO) {
-      await fetch("/api/chat/log", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pregunta, respuesta }),
-      });
-      return;
-    }
-
-    const db = loadDemoDB();
-    db.chatlogs.push({
-      id_log: db.nextChatId++,
-      id_user: null,
-      pregunta,
-      respuesta,
-      creado_en: new Date().toISOString(),
-    });
-    saveDemoDB(db);
-  }
-
+  // (Opcional) si luego quieres guardar logs del chatbot en BD,
+  // hacemos php/chat_log.php y lo conectamos aquí.
   if (chatFab && chatBox) {
     chatFab.addEventListener("click", () => {
       chatBox.classList.add("open");
@@ -344,30 +326,6 @@
 
       const reply = botReply(text);
       setTimeout(() => addBubble(reply, false), 250);
-
-      try {
-        await logChatToApiOrDemo(text, reply);
-      } catch (_) {}
     });
-  }
-
-  // DEMO DB helpers
-  function loadDemoDB() {
-    const raw = localStorage.getItem("consultoria_demo_db");
-    if (raw) return JSON.parse(raw);
-    const init = {
-      nextUserId: 1,
-      nextMessageId: 1,
-      nextChatId: 1,
-      users: [],
-      messages: [],
-      replies: [],
-      chatlogs: [],
-    };
-    localStorage.setItem("consultoria_demo_db", JSON.stringify(init));
-    return init;
-  }
-  function saveDemoDB(db) {
-    localStorage.setItem("consultoria_demo_db", JSON.stringify(db));
   }
 })();
