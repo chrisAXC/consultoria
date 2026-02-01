@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Seguimiento</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h2>Seguimiento de solicitud</h2>
+
+  <form id="formSeg">
+    <input type="text" name="folio" placeholder="Folio" required>
+    <input type="email" name="email" placeholder="Correo" required>
+    <button type="submit">Consultar</button>
+  </form>
+
+  <p id="msgSeg"></p>
+  <div id="resultado"></div>
+
+  <script>
+    const formSeg = document.getElementById("formSeg");
+    const msgSeg = document.getElementById("msgSeg");
+    const resultado = document.getElementById("resultado");
+
+    const esc = (s) => String(s)
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+
+    formSeg.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msgSeg.textContent = "Consultando...";
+      resultado.innerHTML = "";
+
+      const fd = new FormData(formSeg);
+
+      try {
+        const res = await fetch("php/seguimiento.php", { method:"POST", body: fd });
+        const data = await res.json();
+
+        if (!data.ok) {
+          msgSeg.textContent = data.error || "No se pudo consultar";
+          return;
+        }
+
+        msgSeg.textContent = "";
+        const m = data.message;
+        const r = data.reply;
+
+        resultado.innerHTML = `
+          <div style="border:1px solid #ddd;padding:12px;border-radius:12px;margin-top:12px;">
+            <p><b>Folio:</b> ${esc(m.folio)}</p>
+            <p><b>Asunto:</b> ${esc(m.asunto)}</p>
+            <p><b>Estado:</b> ${esc(m.status)}</p>
+            <p><b>Tu mensaje:</b><br>${esc(m.mensaje).replaceAll("\n","<br>")}</p>
+            <hr>
+            <p><b>Respuesta del admin:</b><br>
+              ${r ? esc(r.respuesta).replaceAll("\n","<br>") : "<i>Aún no hay respuesta.</i>"}
+            </p>
+          </div>
+        `;
+      } catch {
+        msgSeg.textContent = "Error de red o servidor.";
+      }
+    });
+  </script>
+
+</body>
+</html>

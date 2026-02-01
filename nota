@@ -1,0 +1,13 @@
+Se ejecuta todo como servidor local XAMPP ya que se uso php para la conexion a la bd en mysql si quieres agregar otra credencial 
+para administrador agregalo al admin_seed.php
+luego corres ese archivo en forma local te genera el hash y tienes una nueva credencial para el admin
+
+ejemplo
+$email = "admin@consultoria.com";
+$pass  = "1234"; // cámbiala si quieres esta es la contraseña 
+$nombre = "Admin";
+
+
+no se instalo ninguna dependencia osea que si ya funciona todo clonando el repositorio 
+
+
